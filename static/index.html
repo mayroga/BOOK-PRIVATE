@@ -1,0 +1,319 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7fa">
+<meta name="description" content="Libreta digital personal para organizar las anotaciones de tu pequeño negocio desde tu dispositivo.">
+<title>LIBRETA PRIVADA — MAY ROGA LLC</title>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color:#1f2937;background:#f5f7fa;font-synthesis:none;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}
+body{margin:0;line-height:1.5}
+header{background:#17324d;color:#fff;padding:24px 16px}
+.header-inner,main,footer{max-width:1050px;margin:auto}
+header h1{margin:0;font-size:clamp(1.6rem,4vw,2.25rem)}
+header p{margin:7px 0 0;color:#e0e9f2}
+header .brand{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#c9d9e8}
+main{padding:18px 14px 40px}
+section,.panel{background:#fff;border:1px solid #e0e6ed;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 3px 12px #18334d0a}
+h2{font-size:1.3rem;margin:0 0 12px;color:#17324d}
+h3{font-size:1.08rem;margin:0 0 10px;color:#17324d}
+p{margin:8px 0}
+.muted,small{color:#596579}
+.intro{background:#eaf2f9;border-color:#d4e4f2}
+.notice{padding:13px 14px;border-left:4px solid #3975a5;background:#f2f7fb;border-radius:8px;margin:12px 0}
+.notice.warning{border-left-color:#c58a21;background:#fff9e9}
+.actions,.form-grid,.summary-grid,.two-columns{display:grid;gap:12px}
+.actions{grid-template-columns:repeat(auto-fit,minmax(145px,1fr));margin:16px 0}
+button,.button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 15px;min-height:46px;background:#205a85;color:#fff;font-weight:700}
+button:hover,.button:hover{filter:brightness(.95)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f0b64d;outline-offset:2px}
+button.secondary{background:#e9eff5;color:#17324d;border:1px solid #d5e0ea}
+button.danger{background:#fff0ee;color:#982d25;border:1px solid #f0c6c1}
+label.button{cursor:pointer}
+.form-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.field{min-width:0}
+.full{grid-column:1/-1}
+label{display:block;font-weight:700;margin:0 0 5px}
+input,select,textarea{font:inherit;width:100%;padding:11px;border:1px solid #bdc8d5;border-radius:9px;background:#fff;color:#1f2937;min-height:44px}
+textarea{min-height:90px;resize:vertical}
+.form-actions,.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.summary-grid{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+.summary-card{border:1px solid #e0e6ed;border-radius:12px;padding:15px;background:#fbfcfd;min-width:0}
+.summary-label,.summary-value{display:block}
+.summary-label{font-size:.92rem;color:#536276}
+.summary-value{font-size:1.35rem;color:#17324d;overflow-wrap:anywhere;margin:4px 0}
+.summary-card small{display:block}
+.entry-row,.reminder-row{display:flex;align-items:center;gap:14px;border-top:1px solid #e8edf2;padding:14px 0}
+.entry-info,.reminder-info{flex:1;min-width:0}
+.entry-info>*{display:block}
+.entry-info p{overflow-wrap:anywhere}
+.entry-amount{white-space:nowrap;color:#17324d}
+.entry-actions{display:flex;gap:7px;flex-wrap:wrap}
+.reminder-row.completed .reminder-info{text-decoration:line-through;opacity:.65}
+.reminder-row input{width:22px;min-height:22px;flex:0 0 22px}
+.message{padding:12px;border-radius:9px;background:#e8f6ee;color:#155a34;margin:12px 0}
+.message.error{background:#fff0ee;color:#982d25}
+[hidden]{display:none!important}
+details{border-top:1px solid #e4e9ef;padding:12px 0}
+summary{font-weight:700;cursor:pointer;color:#17324d}
+footer{padding:20px 14px 35px;color:#596579;font-size:.92rem}
+.dialog{width:min(700px,calc(100% - 24px));max-height:85vh;overflow:auto;border:1px solid #d3dce6;border-radius:16px;padding:22px}
+.dialog::backdrop{background:#102235a8}
+.dialog h2{margin-top:8px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:-22px;background:#fff;padding:12px 0 0}
+@media(max-width:600px){
+ section,.panel{padding:15px;border-radius:12px}
+ .entry-row{align-items:flex-start;flex-wrap:wrap}
+ .entry-info{flex-basis:calc(100% - 20px)}
+ .entry-amount{margin-left:34px}
+ .entry-actions{margin-left:34px}
+ .form-grid{grid-template-columns:1fr}
+ .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .summary-value{font-size:1.1rem}
+}
+@media print{
+ header{background:#fff;color:#000;padding:0}
+ main{padding:0}
+ section,.panel{box-shadow:none;border:0;break-inside:avoid}
+ button,.toolbar,#entryForm,#reminderForm,#notebookControls,#backupPanel,#helpToggle,footer{display:none!important}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+<p class="brand">MAY ROGA LLC</p>
+<h1>Mi libreta</h1>
+<p>Tu negocio. Tus cuentas. Tu libreta.</p>
+</div>
+</header>
+
+<main>
+<div id="appLoading" class="panel" role="status">Preparando tu libreta en este dispositivo…</div>
+
+<div id="appContent" hidden>
+<section class="intro">
+<h2>Bienvenido a tu libreta privada</h2>
+<p>Un lugar sencillo para anotar el dinero que entra, lo que sale, tus compras, tus pagos y tus pendientes.</p>
+<div class="notice">
+<strong>Tus anotaciones se guardan en este navegador.</strong>
+<p>Esta versión está diseñada para no enviar las anotaciones a los servidores de May Roga LLC. Si cambias de dispositivo o navegador, no aparecerán automáticamente allí.</p>
+</div>
+<p class="muted">Empieza con un botón, anota lo que quieras registrar y guarda. Puedes corregir o borrar tus anotaciones.</p>
+<button type="button" id="helpToggle" class="secondary" aria-expanded="false">¿Cómo funciona?</button>
+<div id="quickHelp" hidden>
+<details open>
+<summary>¿Qué puedo anotar?</summary>
+<p>Lo que tú decidas registrar: ventas, compras, gastos, pagos, pérdidas, reservas o deudas. Los resultados dependen de los datos que introduzcas y conserves.</p>
+</details>
+<details>
+<summary>¿Qué significan mis cuentas?</summary>
+<p>La diferencia registrada resta de los ingresos las compras, los gastos, los pagos y las pérdidas anotadas. Las reservas y las deudas aparecen separadas. Los cálculos no verifican tus movimientos bancarios ni el efectivo real.</p>
+</details>
+<details>
+<summary>¿Cómo conservo mis datos?</summary>
+<p>Haz copias de seguridad con regularidad y guarda una copia en un lugar seguro. Limpiar los datos del navegador, cambiar de perfil o perder el dispositivo puede hacer que pierdas la libreta.</p>
+</details>
+</div>
+</section>
+
+<div id="message" class="message" role="status" aria-live="polite" hidden></div>
+
+<section id="notebookControls">
+<h2>Mi negocio</h2>
+<p>Libreta seleccionada: <strong id="activeNotebookName">Mi negocio</strong></p>
+<div class="form-grid">
+<div class="field">
+<label for="notebookSelect">Elegir libreta</label>
+<select id="notebookSelect"></select>
+</div>
+<div class="field">
+<label>Administrar libretas</label>
+<div class="toolbar">
+<button type="button" id="newNotebook">Crear otra</button>
+<button type="button" class="secondary" id="renameNotebook">Cambiar nombre</button>
+<button type="button" class="danger" id="deleteNotebook">Borrar libreta</button>
+</div>
+</div>
+</div>
+<p class="muted">Cada libreta se guarda por separado en este navegador. Crear varias libretas no crea cuentas bancarias ni verifica movimientos reales.</p>
+</section>
+
+<section id="entrySection">
+<h2 id="entryFormTitle">Anotar dinero</h2>
+<p>Registra un movimiento. Puedes corregirlo después si te equivocas.</p>
+<form id="entryForm">
+<div class="form-grid">
+<div class="field">
+<label for="entryType">¿Qué quieres anotar?</label>
+<select id="entryType" required>
+<option value="income">Ingreso / venta</option>
+<option value="purchase">Compra</option>
+<option value="expense">Gasto</option>
+<option value="payment">Pago realizado</option>
+<option value="loss">Pérdida</option>
+<option value="reserve">Dinero reservado</option>
+<option value="debt">Deuda anotada</option>
+</select>
+</div>
+<div class="field">
+<label for="entryAmount">Cantidad en dólares (USD)</label>
+<input id="entryAmount" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" placeholder="Ej.: 125.50" required>
+</div>
+<div class="field">
+<label for="entryDate">Fecha</label>
+<input id="entryDate" type="date" required>
+</div>
+<div class="field">
+<label for="entryCategory">¿De qué se trata?</label>
+<input id="entryCategory" maxlength="80" placeholder="Ej.: ventas, comida, electricidad">
+</div>
+<div class="field">
+<label for="entryMethod">¿Cómo se movió el dinero?</label>
+<select id="entryMethod">
+<option value="cash">Efectivo</option>
+<option value="card">Tarjeta</option>
+<option value="transfer">Transferencia</option>
+<option value="other">Otro / no especificado</option>
+</select>
+</div>
+<div class="field full">
+<label for="entryNote">Nota opcional</label>
+<textarea id="entryNote" maxlength="500" placeholder="Un detalle que quieras recordar…"></textarea>
+</div>
+</div>
+<div class="form-actions">
+<button type="submit" id="saveEntry">Guardar anotación</button>
+<button type="button" class="secondary" id="cancelEdit" hidden>Cancelar corrección</button>
+</div>
+<p class="muted">La cantidad se guarda en esta libreta. No es una conexión con tu banco ni una verificación de efectivo o tarjeta.</p>
+</form>
+</section>
+
+<section>
+<h2>Mis cuentas</h2>
+<p>Consulta lo anotado para un mes y un año. Los resultados se actualizan cuando corriges o borras movimientos.</p>
+<div class="form-grid">
+<div class="field">
+<label for="summaryMonth">Mes</label>
+<input id="summaryMonth" type="month">
+</div>
+<div class="field">
+<label for="summaryYear">Año</label>
+<input id="summaryYear" type="number" min="2000" max="2200" step="1">
+</div>
+</div>
+<h3 style="margin-top:18px">Resumen mensual</h3>
+<div id="summaryCards" class="summary-grid"></div>
+<p id="summaryDisclaimer" class="notice"></p>
+<h3 style="margin-top:22px">Resumen anual acumulado</h3>
+<div id="yearSummary" class="summary-grid"></div>
+<div class="toolbar">
+<button type="button" id="printSummary">Imprimir resumen / guardar PDF</button>
+<button type="button" class="secondary" id="printAllRecords">Imprimir registros</button>
+<button type="button" class="secondary" id="exportCSV">Exportar registros CSV</button>
+</div>
+<p class="muted">Puedes imprimir y elegir “Guardar como PDF”. Revisa el documento antes de compartirlo con tu contable.</p>
+</section>
+
+<section>
+<h2>Mis anotaciones</h2>
+<p>Los movimientos más recientes aparecen primero. Puedes corregir o borrar cada uno.</p>
+<div id="entriesList"></div>
+</section>
+
+<section>
+<h2>Mis recordatorios</h2>
+<p>Anota pagos, compras y fechas importantes para consultarlos cuando abras la libreta.</p>
+<form id="reminderForm">
+<div class="form-grid">
+<div class="field">
+<label for="reminderTitle">¿Qué necesitas recordar?</label>
+<input id="reminderTitle" maxlength="120" placeholder="Ej.: pagar la electricidad" required>
+</div>
+<div class="field">
+<label for="reminderDate">Fecha del pendiente</label>
+<input id="reminderDate" type="date" required>
+</div>
+<div class="field full">
+<label for="reminderNote">Detalle opcional</label>
+<input id="reminderNote" maxlength="300" placeholder="Ej.: revisar la factura">
+</div>
+</div>
+<div class="form-actions">
+<button type="submit">Guardar recordatorio</button>
+</div>
+</form>
+<div id="remindersList"></div>
+<div class="notice warning">
+<strong>Importante:</strong> en esta versión los recordatorios se consultan dentro de la aplicación. No se garantiza una alarma sonora ni una notificación cuando la aplicación está cerrada.
+</div>
+</section>
+
+<section id="backupPanel">
+<h2>Mis datos y mis copias</h2>
+<p>Tu libreta es tuya. Guarda una copia periódicamente, especialmente antes de cambiar de dispositivo o navegador.</p>
+<div class="toolbar">
+<button type="button" id="exportBackup">Crear copia de seguridad</button>
+<label class="button" for="importFile" style="display:inline-flex;align-items:center;justify-content:center">Restaurar una copia</label>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+</div>
+<p class="muted">Restaurar una copia reemplaza los datos actuales de esta aplicación. No compartas el archivo de copia con personas en quienes no confíes: puede contener información privada.</p>
+<hr>
+<h3>Borrar todos los datos de esta aplicación</h3>
+<p>Esta acción elimina las libretas, anotaciones y recordatorios guardados por esta aplicación en este navegador. No elimina copias que hayas descargado ni información compartida fuera de ella.</p>
+<button type="button" id="eraseAll" class="danger">Borrar todos mis datos locales</button>
+</section>
+
+<section>
+<h2>Transparencia y responsabilidad</h2>
+<p>Queremos que sepas qué hace la libreta, qué no hace y qué puedes esperar de ella.</p>
+<div class="toolbar">
+<button type="button" id="openPrivacy" class="secondary">Leer privacidad</button>
+<button type="button" id="openLegal" class="secondary">Leer condiciones y límites</button>
+</div>
+<p class="muted">La aplicación organiza anotaciones. No es un banco, procesador de pagos, auditor, sistema de verificación de ventas ni sustituto de un profesional contable o fiscal.</p>
+</section>
+</div>
+</main>
+
+<footer>
+<p><strong>LIBRETA PRIVADA — MAY ROGA LLC</strong></p>
+<p>Una herramienta de organización personal para pequeños negocios. Las cantidades y los resúmenes dependen de las anotaciones que el usuario decida conservar.</p>
+<p>La aplicación no garantiza que los registros sean completos, que coincidan con el dinero real o que satisfagan todos los requisitos legales, contables o fiscales aplicables.</p>
+</footer>
+
+<dialog id="privacyDialog" class="dialog">
+<h2>Privacidad: qué se guarda y dónde</h2>
+<p><strong>1. Almacenamiento local.</strong> En esta versión, las anotaciones se guardan en IndexedDB del navegador y dispositivo donde utilizas la aplicación.</p>
+<p><strong>2. Sin envío de anotaciones.</strong> El servidor entrega los archivos necesarios para mostrar la aplicación. El código de esta versión no incluye una función para enviar anotaciones, ventas, compras, gastos, notas o recordatorios a May Roga LLC. Esta descripción debe comprobarse técnicamente en el sitio publicado antes de ofrecer garantías absolutas.</p>
+<p><strong>3. Sin sincronización automática.</strong> Los datos no se trasladan automáticamente a otro teléfono, computadora, perfil o navegador.</p>
+<p><strong>4. Protección del dispositivo.</strong> Las personas con acceso al dispositivo o al perfil del navegador podrían acceder a los datos. Esta versión no incorpora cifrado propio de la libreta. Protege tu dispositivo y conserva copias en un lugar seguro.</p>
+<p><strong>5. Pérdida de información.</strong> Limpiar los datos del navegador, restablecer el dispositivo o sufrir un fallo puede ocasionar pérdida de datos. La recuperación depende de las copias que tú hayas creado y conservado.</p>
+<p><strong>6. Exportaciones.</strong> Los archivos JSON, CSV y documentos impresos pueden contener información privada. Tú decides dónde guardarlos y con quién compartirlos.</p>
+<p><strong>7. Pagos futuros.</strong> Si se añade una suscripción, el proveedor de pagos podría tratar datos de facturación. Esto no debe confundirse con el contenido de la libreta; la implementación de pagos necesitará una explicación de privacidad específica.</p>
+<div class="dialog-actions"><button type="button" id="closePrivacy">Entendido</button></div>
+</dialog>
+
+<dialog id="legalDialog" class="dialog">
+<h2>Condiciones de uso y límites</h2>
+<p><strong>1. Finalidad.</strong> LIBRETA PRIVADA es una herramienta de organización personal. Permite registrar movimientos, hacer cálculos aritméticos y consultar resúmenes a partir de los datos introducidos.</p>
+<p><strong>2. Datos introducidos por el usuario.</strong> Tú eliges qué registrar, corregir, conservar, exportar o borrar. Los resultados reflejan los datos presentes en la libreta; no confirman que representen todas las operaciones del negocio.</p>
+<p><strong>3. Cálculos orientativos.</strong> Los totales se calculan con las anotaciones disponibles. No se comprueban recibos, estados bancarios, ventas reales, inventarios, obligaciones pendientes ni transacciones de terceros. Una cifra positiva no demuestra por sí sola que ese dinero siga disponible.</p>
+<p><strong>4. Responsabilidad del usuario.</strong> Revisa las cantidades, fechas, categorías y resúmenes. Conserva los documentos originales que necesites y haz copias de seguridad. Decide qué registros y documentos compartir con tu contable u otros profesionales.</p>
+<p><strong>5. Sin asesoramiento profesional.</strong> La aplicación no proporciona por sí sola asesoramiento legal, fiscal, financiero ni contable, ni prepara una declaración oficial. Las obligaciones pueden depender del tipo de negocio, la ubicación y las circunstancias. Consulta a un profesional cualificado cuando sea necesario.</p>
+<p><strong>6. Exportaciones no certificadas.</strong> Los archivos y resúmenes son documentos generados a partir de las anotaciones conservadas. No constituyen una auditoría, certificación de integridad, garantía de cumplimiento fiscal ni verificación independiente.</p>
+<p><strong>7. Disponibilidad y conservación.</strong> La aplicación puede dejar de estar disponible temporalmente o cambiar. El almacenamiento local puede fallar o borrarse. No se promete conservación perpetua ni recuperación automática de los datos.</p>
+<p><strong>8. Uso responsable.</strong> La herramienta no verifica la integridad de los registros y no debe presentarse como prueba de que las anotaciones son completas o exactas. El usuario es responsable de cómo utiliza, conserva y comparte sus datos.</p>
+<p><strong>9. Derechos legales.</strong> Estas explicaciones no eliminan derechos que la ley no permita renunciar ni excluyen responsabilidades que legalmente no puedan excluirse. Las condiciones definitivas y la política de privacidad deben revisarse conforme a las leyes aplicables antes de ofrecer comercialmente la aplicación.</p>
+<p><strong>10. Contacto.</strong> Antes de publicar una versión comercial, añade un medio de contacto real y verificado de May Roga LLC para consultas de privacidad, condiciones y soporte. No publiques datos de contacto inventados.</p>
+<div class="dialog-actions"><button type="button" id="closeLegal">Cerrar</button></div>
+</dialog>
+
+<script defer src="/static/storage.js"></script>
+<script defer src="/static/app.js"></script>
+</body>
+</html>
