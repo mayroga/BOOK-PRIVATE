@@ -9,11 +9,13 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 INDEX_FILE = STATIC_DIR / "index.html"
+APP_NAME = "LIBRETA PRIVADA — MAY ROGA LLC"
+APP_VERSION = "1.0.2"
 
 app = FastAPI(
-    title="LIBRETA PRIVADA — MAY ROGA LLC",
+    title=APP_NAME,
     description="Libreta digital personal que almacena las anotaciones en el dispositivo del usuario.",
-    version="1.0.1",
+    version=APP_VERSION,
     docs_url=None,
     redoc_url=None,
     openapi_url=None
@@ -25,10 +27,17 @@ allowed_hosts = [
     if host.strip()
 ]
 if allowed_hosts:
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=allowed_hosts
+    )
 
 if STATIC_DIR.is_dir():
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    app.mount(
+        "/static",
+        StaticFiles(directory=str(STATIC_DIR), check_dir=True),
+        name="static"
+    )
 
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
@@ -60,9 +69,16 @@ async def home():
             {"error": "No se encontró el archivo static/index.html."},
             status_code=500
         )
-    return FileResponse(INDEX_FILE, media_type="text/html")
+    return FileResponse(
+        INDEX_FILE,
+        media_type="text/html",
+        headers={"Cache-Control": "no-store"}
+    )
 
 @app.get("/health", include_in_schema=False)
 async def health():
-    # Solo comprueba el estado del servidor; no lee datos de la libreta.
-    return {"status": "ok", "app": "LIBRETA PRIVADA", "version": "1.0.1"}
+    return {
+        "status": "ok",
+        "app": "LIBRETA PRIVADA",
+        "version": APP_VERSION
+    }
