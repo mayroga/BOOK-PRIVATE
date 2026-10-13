@@ -3,503 +3,468 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f4f8fc">
-<meta name="description" content="Libreta Privada de MAY ROGA LLC. Organiza ingresos, gastos, cuentas y recordatorios desde tu dispositivo.">
-<title>LIBRETA PRIVADA — MAY ROGA LLC</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#edf5fc">
+<meta name="description" content="Libreta Privada de May Roga LLC. Registra tus movimientos de dinero, organiza tus anotaciones y consulta tus resúmenes.">
+<title>LIBRETA PRIVADA | MAY ROGA LLC</title>
 <style>
-:root{color-scheme:light;--bg:#f4f8fc;--card:#fff;--ink:#203047;--muted:#65758b;--line:#dfe7f0;--blue:#245da8;--blue-dark:#17477f;--blue-soft:#eaf3ff;--green:#19764b;--red:#a83e43;--shadow:0 5px 22px rgba(35,65,100,.055);--radius:18px}
+:root{color-scheme:light;--bg:#edf4fa;--surface:#fff;--ink:#203348;--muted:#63768a;--blue:#245b91;--blue2:#e7f1fb;--line:#dce6ef;--green:#24734b;--red:#a63e43;--radius:18px;--shadow:0 5px 20px rgba(37,72,105,.07)}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:18px}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #86b9ff;outline-offset:3px}
-a{color:var(--blue)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #8bbce9;outline-offset:3px}
 button:disabled{opacity:.55;cursor:not-allowed}
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.topbar-inner{max-width:1060px;margin:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-mark{width:43px;height:43px;border-radius:14px;background:var(--blue-soft);display:grid;place-items:center;color:var(--blue);font-size:24px;font-weight:800}
-.brand h1{font-size:19px;line-height:1.2;margin:0;letter-spacing:.025em}
+.app-shell{width:min(100%,760px);margin:0 auto;min-height:100vh;padding:18px 15px 34px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:45px;height:45px;flex:0 0 45px;border-radius:15px;background:#d9eafa;color:var(--blue);display:grid;place-items:center;font-size:23px;font-weight:800}
+.brand h1{font-size:18px;line-height:1.2;margin:0;letter-spacing:.2px}
 .brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
-.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-main,.footer-inner{width:min(100% - 28px,960px);margin:0 auto}
-main{padding:24px 0 38px}
-.hero{padding:12px 4px 20px}
-.eyebrow{color:var(--blue);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;margin:0 0 7px}
-h2{font-size:25px;line-height:1.25;margin:0 0 8px;letter-spacing:-.025em}
-h3{font-size:18px;line-height:1.35;margin:0 0 8px}
-h4{font-size:15px;margin:0 0 8px}
-p{margin:0 0 12px}
-.muted,.hint{color:var(--muted)}
-.muted{font-size:14px}
-.hint{font-size:12px;line-height:1.5}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:21px;margin-bottom:16px;box-shadow:var(--shadow);min-width:0}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:17px}
-.card-head p{margin:5px 0 0;color:var(--muted);font-size:14px}
-.today-card{padding:24px;text-align:center;background:linear-gradient(145deg,#fff,#f2f7ff);border-color:#d7e6f7}
-.today-label{font-size:12px;letter-spacing:.09em;font-weight:800;color:var(--muted);text-transform:uppercase;margin:0 0 5px}
-.today-total{font-size:clamp(36px,8vw,50px);font-weight:800;letter-spacing:-.045em;line-height:1.2;color:var(--green);margin:5px 0 8px;overflow-wrap:anywhere}
-.today-note{font-size:13px;color:var(--muted);margin:0}
-.action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
-.action-card{display:flex;align-items:flex-start;gap:12px;width:100%;min-height:100px;text-align:left;padding:17px;background:#fff;border:1px solid var(--line);border-radius:16px;color:var(--ink);transition:border-color .15s,transform .15s,background .15s}
-.action-card:hover{border-color:#a8c6ec;background:#fbfdff;transform:translateY(-1px)}
-.action-icon{flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;border-radius:13px;background:var(--blue-soft);color:var(--blue);font-size:23px;font-weight:700}
-.action-card strong{display:block;font-size:15px;margin:2px 0 5px}
-.action-card small{display:block;color:var(--muted);font-size:13px;line-height:1.4}
-.status-card{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;background:#f0f8f3;border:1px solid #d7ebdf;border-radius:15px;margin:0 0 18px}
-.status-icon{font-size:21px;line-height:1.4}
-.status-card strong{display:block;font-size:14px;margin-bottom:3px}
-.status-card p{font-size:13px;color:#4f6a5a;margin:0}
-.section-label{display:flex;align-items:center;gap:9px;color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;margin:27px 3px 11px}
-.section-label:before{content:"";width:21px;height:2px;border-radius:2px;background:#83a9d9}
-.section-title{font-size:22px;margin:0 0 7px}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.field.full{grid-column:1/-1}
-label{font-size:13px;font-weight:700;color:#36475c}
-input,select,textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #ccd8e5;border-radius:10px;background:#fff;color:var(--ink)}
-textarea{resize:vertical;min-height:80px}
-input::placeholder,textarea::placeholder{color:#8a98aa}
-.actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:16px}
-.btn{display:inline-flex;justify-content:center;align-items:center;gap:7px;min-height:42px;padding:10px 15px;border:1px solid transparent;border-radius:11px;font-size:14px;font-weight:700;text-decoration:none}
-.btn-primary{background:var(--blue);color:white}
-.btn-primary:hover{background:var(--blue-dark)}
-.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
-.btn-secondary:hover{background:#f5f8fc}
-.btn-danger{background:#fff5f5;border-color:#f0d5d6;color:var(--red)}
-.btn-small{min-height:34px;padding:6px 10px;font-size:12px;border-radius:9px}
-.btn-link{padding:5px 2px;min-height:auto;border:0;background:transparent;color:var(--blue);font-weight:700}
-.form-message{padding:10px 12px;border-radius:10px;background:var(--blue-soft);color:var(--blue);font-size:13px;margin:0 0 12px}
-.form-message:empty{display:none}
-.notebook-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px}
-.notebook-actions{display:flex;gap:7px;flex-wrap:wrap}
-.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.stat{border:1px solid var(--line);background:#fff;border-radius:13px;padding:15px;min-width:0}
-.stat-label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
-.stat-value{display:block;font-size:clamp(17px,3vw,24px);font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere}
-.stat-note{display:block;font-size:11px;color:var(--muted);margin-top:5px}
-.subsection{margin-top:20px}
-.subsection-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.filter-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.summary-disclaimer{border-top:1px solid var(--line);padding-top:13px;margin-top:16px;font-size:12px;line-height:1.6;color:var(--muted)}
-.entries-list,.reminders-list{display:grid;gap:10px}
-.entry-item,.reminder-item{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fff;min-width:0}
-.entry-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.entry-name{font-size:14px;font-weight:800;overflow-wrap:anywhere}
-.entry-meta{font-size:12px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
-.entry-amount{font-size:17px;font-weight:800;white-space:nowrap}
-.entry-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-.empty-state{padding:22px 15px;text-align:center;background:#f8fafc;border:1px dashed #d6e0eb;border-radius:13px;color:var(--muted);font-size:14px}
-.reminder-item{display:flex;gap:12px;align-items:flex-start}
-.reminder-item input[type=checkbox]{width:18px;min-width:18px;margin-top:4px}
-.reminder-content{flex:1;min-width:0}
-.reminder-title{font-size:14px;font-weight:700;overflow-wrap:anywhere}
-.reminder-detail{font-size:12px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
-.reminder-done{text-decoration:line-through;color:var(--muted)}
-details{border:1px solid var(--line);border-radius:13px;background:#fff;margin:10px 0;overflow:hidden}
-summary{padding:14px 15px;cursor:pointer;font-size:14px;font-weight:750}
-.details-body{padding:0 15px 15px;font-size:14px}
-.details-body p:last-child{margin-bottom:0}
-.backup-actions{display:flex;gap:9px;flex-wrap:wrap}
-.file-input{max-width:100%;font-size:13px}
-.danger-zone{border-color:#efd9da}
-.disclosure{font-size:13px;line-height:1.65;color:var(--muted)}
-footer{border-top:1px solid var(--line);background:#fff}
-.footer-inner{padding:20px 0 25px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.footer-brand{font-size:12px;font-weight:800;letter-spacing:.035em}
-.footer-links{display:flex;gap:15px;flex-wrap:wrap}
-.footer-links button,.footer-links a{font-size:12px;color:var(--blue);border:0;background:none;padding:3px 0;text-decoration:underline;text-underline-offset:3px}
-dialog{width:min(620px,calc(100% - 28px));max-height:85vh;overflow:auto;padding:0;border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--ink);box-shadow:0 20px 70px #102b4a40}
-dialog::backdrop{background:#172b4280}
-.dialog-head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:16px 19px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.dialog-head h2{font-size:19px;margin:0}
-.dialog-body{padding:18px 20px;font-size:14px;line-height:1.65}
-.dialog-body h3{font-size:15px;margin:18px 0 6px}
-.dialog-body h3:first-child{margin-top:0}
-#appLoading{padding:15px;text-align:center;color:var(--muted);font-size:13px}
-#quickHelp{margin:12px 0;padding:13px 15px;border:1px solid #d9e7f6;border-radius:12px;background:#f5f9ff;font-size:13px}
-[hidden]{display:none!important}
-@media(min-width:760px){main{padding-top:30px}.hero{padding-top:18px}.today-card{padding:30px}.action-grid{gap:14px}.action-card{padding:20px;min-height:108px}.card{padding:24px}.section-label{margin-top:31px}}
-@media(max-width:540px){main,.footer-inner{width:min(100% - 20px,960px)}.topbar-inner{padding:13px 12px}.brand h1{font-size:16px}.brand-mark{width:39px;height:39px}.top-actions{width:100%}.top-actions .btn{flex:1}.hero{padding-top:9px}.card{padding:16px}.action-grid{gap:9px}.action-card{display:block;padding:13px;min-height:130px}.action-icon{width:37px;height:37px;margin-bottom:9px;font-size:20px}.action-card strong{font-size:14px}.action-card small{font-size:12px}.form-grid,.filter-row{grid-template-columns:1fr}.field.full{grid-column:auto}.stats-grid{grid-template-columns:1fr}.stat{padding:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}.stat-label{margin:0}.stat-value{font-size:18px;text-align:right}.stat-note{display:none}.notebook-row{grid-template-columns:1fr}.entry-top{gap:8px}.entry-amount{font-size:15px}.footer-inner{align-items:flex-start;flex-direction:column}.footer-links{gap:12px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+.small-button,.secondary-button,.primary-button,.danger-button{border:1px solid var(--line);border-radius:12px;padding:11px 15px;font-weight:700;min-height:44px}
+.small-button,.secondary-button{background:#fff;color:var(--blue)}
+.primary-button{background:var(--blue);color:#fff;border-color:var(--blue)}
+.danger-button{background:#fff3f3;color:var(--red);border-color:#f0d4d4}
+button:hover{filter:brightness(.98)}
+main{display:block}
+.screen{display:none;animation:appear .16s ease-out}
+.screen.active{display:block}
+@keyframes appear{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.home-hero{background:linear-gradient(135deg,#dcecfb,#f8fbff);border:1px solid #d2e3f4;border-radius:24px;padding:23px 20px;margin-bottom:15px}
+.eyebrow{font-size:11px;letter-spacing:1.5px;font-weight:800;color:var(--blue);text-transform:uppercase;margin:0 0 8px}
+.home-hero h2{font-size:26px;line-height:1.2;margin:0 0 8px}
+.home-hero p{color:#536b81;margin:0}
+.today-card,.card,.action-card,.summary-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.today-card{padding:18px 19px;margin-bottom:17px}
+.today-label{color:var(--muted);font-size:13px;font-weight:700}
+.today-amount{font-size:31px;line-height:1.2;font-weight:800;letter-spacing:-.6px;margin:6px 0;color:var(--blue);overflow-wrap:anywhere}
+.today-foot{font-size:12px;color:var(--muted);margin:0}
+.home-status{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.home-status strong{display:block;font-size:14px}
+.home-status span{font-size:13px;color:var(--muted)}
+.section-heading{margin:23px 0 12px}
+.section-heading h2{font-size:20px;margin:0 0 4px}
+.section-heading p{font-size:13px;color:var(--muted);margin:0}
+.action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.action-card{min-height:116px;text-align:left;padding:16px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;color:var(--ink);width:100%}
+.action-icon{width:39px;height:39px;display:grid;place-items:center;background:var(--blue2);border-radius:12px;color:var(--blue);font-size:21px;font-weight:700}
+.action-card strong{font-size:15px}
+.action-card small{font-size:12px;color:var(--muted);line-height:1.35}
+.home-footer{font-size:11px;color:var(--muted);text-align:center;margin:23px 0 0}
+.screen-header{display:flex;align-items:center;gap:12px;margin:3px 0 17px}
+.back-button{width:45px;height:45px;flex:0 0 45px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--blue);font-size:22px}
+.screen-header h2{font-size:23px;line-height:1.2;margin:0}
+.screen-header p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.card{padding:18px;margin-bottom:13px;min-width:0}
+.card h3{font-size:16px;margin:0 0 12px}
+.card p{margin-top:0}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:13px;font-weight:700;color:#43596e}
+.field input,.field select,.field textarea,.filter-control{width:100%;min-width:0;border:1px solid #cddae6;background:#fff;border-radius:11px;padding:12px;color:var(--ink);min-height:45px}
+.field textarea{min-height:92px;resize:vertical}
+.field input::placeholder,.field textarea::placeholder{color:#8b9aaa}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.form-actions button{flex:1}
+.hint{font-size:12px;color:var(--muted);line-height:1.5}
+.inline-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.inline-row>*{flex:1;min-width:120px}
+.list{display:flex;flex-direction:column;gap:10px}
+.list-item{border:1px solid var(--line);background:#fff;border-radius:13px;padding:13px;overflow-wrap:anywhere}
+.list-item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.list-item strong{font-size:14px}
+.list-item p{font-size:12px;color:var(--muted);margin:5px 0 0;white-space:pre-wrap}
+.item-amount{font-size:15px;font-weight:800;white-space:nowrap}
+.item-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.item-actions button{padding:7px 10px;min-height:35px;border-radius:9px;border:1px solid var(--line);background:#f8fbff;color:var(--blue);font-size:12px;font-weight:700}
+.empty-state{padding:20px;text-align:center;border:1px dashed #cbd9e6;border-radius:13px;color:var(--muted);font-size:13px}
+.summary-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:13px}
+.summary-controls .field{margin:0}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.summary-card{padding:14px;min-width:0;box-shadow:none}
+.summary-card span{display:block;color:var(--muted);font-size:12px;line-height:1.4}
+.summary-card strong{display:block;font-size:20px;line-height:1.3;margin-top:7px;overflow-wrap:anywhere}
+.summary-card.positive strong{color:var(--green)}
+.summary-card.negative strong{color:var(--red)}
+.summary-card.highlight{background:#e9f3fc;border-color:#d2e5f6}
+.summary-card.highlight strong{color:var(--blue)}
+.disclaimer{background:#f5f8fb;border:1px solid var(--line);padding:12px;border-radius:12px;font-size:12px;color:var(--muted);line-height:1.55;margin-top:13px}
+.notice{display:none;border:1px solid #cce4d5;background:#effaf2;color:#225e3c;padding:11px 13px;border-radius:12px;margin:0 0 14px;font-size:13px}
+.notice.visible{display:block}
+.notice.error{background:#fff2f2;border-color:#edcccc;color:#8d3030}
+.account-balance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.account-balance .summary-card{background:#f9fbfd}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar>*{flex:1}
+input[type=file]{max-width:100%}
+details{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+details summary{cursor:pointer;font-weight:700;font-size:14px}
+details p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:0}
+.dialog{width:min(92vw,520px);max-height:85vh;overflow:auto;border:1px solid var(--line);border-radius:18px;padding:21px;background:#fff;color:var(--ink)}
+.dialog::backdrop{background:rgba(22,42,63,.48)}
+.dialog h2{font-size:20px;margin:0 0 12px}
+.dialog p,.dialog li{font-size:13px;line-height:1.6;color:#53677b}
+.dialog-actions{display:flex;justify-content:flex-end;margin-top:15px}
+.app-bottom{margin-top:20px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.app-bottom button{border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:12px;padding:7px}
+.hidden{display:none!important}
+@media(min-width:600px){.app-shell{padding:25px 22px 40px}.home-hero{padding:29px 27px}.home-hero h2{font-size:30px}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.account-balance{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:380px){.app-shell{padding:12px 10px 28px}.brand h1{font-size:15px}.home-hero h2{font-size:23px}.action-card{padding:12px;min-height:112px}.field-grid{grid-template-columns:1fr}.summary-card strong{font-size:18px}.card{padding:14px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{body{background:#fff}.topbar,.back-button,.form-actions,.toolbar,.app-bottom,.action-grid,.home-footer{display:none!important}.app-shell{width:100%;padding:0}.screen{display:none!important}.screen.active{display:block!important}.card,.summary-card,.today-card{box-shadow:none;break-inside:avoid}}
 </style>
 </head>
 <body>
+<div class="app-shell">
 <header class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">L</div>
-      <div>
-        <h1>LIBRETA PRIVADA</h1>
-        <p>Una herramienta de MAY ROGA LLC</p>
-      </div>
-    </div>
-    <div class="top-actions">
-      <button class="btn btn-secondary" type="button" id="helpToggle" aria-controls="quickHelp" aria-expanded="false">Ayuda</button>
-      <button class="btn btn-secondary" type="button" id="openPrivacy">Privacidad</button>
-    </div>
-  </div>
+<div class="brand">
+<div class="brand-mark" aria-hidden="true">L</div>
+<div>
+<h1>LIBRETA PRIVADA</h1>
+<p>MAY ROGA LLC · Tus anotaciones, en orden</p>
+</div>
+</div>
+<button class="small-button" type="button" data-go="homeSection" aria-label="Volver al inicio">Inicio</button>
 </header>
-
+<div id="message" class="notice" role="status" aria-live="polite"></div>
 <main id="appContent">
-  <div id="appLoading" hidden>Preparando tu libreta…</div>
-
-  <section class="hero" id="homeSection">
-    <p class="eyebrow">Tu espacio personal</p>
-    <h2 id="homeTitle">Mi libreta</h2>
-    <p class="muted">Tus números y pendientes, organizados en un solo lugar.</p>
-    <p class="hint" style="margin-top:8px">Tus anotaciones se guardan en este dispositivo.</p>
-    <p class="hint" style="margin-top:5px"><span id="homeNotebookName">Mi negocio</span></p>
-  </section>
-
-  <section class="card today-card" aria-labelledby="todayHeading">
-    <p class="today-label" id="todayHeading">Dinero registrado hoy</p>
-    <div class="today-total" id="todayMoneyTotal" aria-live="polite">$0.00</div>
-    <p class="today-note">Suma de ingresos y ventas anotados hoy.</p>
-  </section>
-
-  <nav class="action-grid" aria-label="Acciones principales">
-    <button class="action-card" type="button" data-go="entrySection" data-entry-type="income">
-      <span class="action-icon" aria-hidden="true">＋</span>
-      <span><strong>Anotar dinero</strong><small>Ventas e ingresos</small></span>
-    </button>
-    <button class="action-card" type="button" data-go="entrySection" data-entry-type="expense">
-      <span class="action-icon" aria-hidden="true">−</span>
-      <span><strong>Anotar gastos</strong><small>Compras y pagos</small></span>
-    </button>
-    <button class="action-card" type="button" data-go="accountsSection">
-      <span class="action-icon" aria-hidden="true">▤</span>
-      <span><strong>Mis cuentas</strong><small>Cuánto has anotado y qué debes</small></span>
-    </button>
-    <button class="action-card" type="button" data-go="remindersSection">
-      <span class="action-icon" aria-hidden="true">✓</span>
-      <span><strong>Mis recordatorios</strong><small>Lo que viene después</small></span>
-    </button>
-  </nav>
-
-  <div id="quickHelp" hidden>
-    <strong>¿Por dónde empiezo?</strong>
-    <p style="margin:6px 0 0">Anota una venta o un gasto. Después puedes consultar tus cuentas, guardar recordatorios y crear una copia de seguridad. Los totales reflejan lo que hayas registrado, no el saldo verificado de tu banco.</p>
-  </div>
-
-  <section class="status-card" aria-live="polite">
-    <span class="status-icon" aria-hidden="true">✓</span>
-    <div>
-      <strong id="homeStatus">Todo tranquilo por ahora</strong>
-      <p id="homeStatusDetail">Aquí aparecerán tus avisos importantes cuando los necesites.</p>
-    </div>
-  </section>
-
-  <div class="section-label">Anotaciones</div>
-  <section class="card" id="entrySection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title" id="entryFormTitle">Anotar un movimiento</h2>
-        <p>Registra una cantidad para tenerla presente.</p>
-      </div>
-    </div>
-    <div class="form-message" id="message" role="status" aria-live="polite"></div>
-    <form id="entryForm">
-      <div class="form-grid">
-        <div class="field full">
-          <label for="entryType">Tipo de movimiento</label>
-          <select id="entryType" name="type" required>
-            <option value="income">Ingreso o venta</option>
-            <option value="expense">Gasto</option>
-            <option value="purchase">Compra</option>
-            <option value="payment">Pago realizado</option>
-            <option value="debt">Deuda anotada</option>
-            <option value="reserve">Dinero reservado</option>
-            <option value="loss">Pérdida</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="entryAmount">Cantidad en dólares (USD)</label>
-          <input id="entryAmount" name="amount" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" placeholder="0.00" required>
-        </div>
-        <div class="field">
-          <label for="entryDate">Fecha</label>
-          <input id="entryDate" name="date" type="date" required>
-        </div>
-        <div class="field">
-          <label for="entryMethod">Método</label>
-          <select id="entryMethod" name="method" required>
-            <option value="cash">Efectivo</option>
-            <option value="card">Tarjeta</option>
-            <option value="transfer">Transferencia</option>
-            <option value="other">Otro método</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="entryCategory">Categoría (opcional)</label>
-          <input id="entryCategory" name="category" maxlength="80" placeholder="Ej.: ventas, comida, transporte">
-        </div>
-        <div class="field full">
-          <label for="entryNote">Nota (opcional)</label>
-          <textarea id="entryNote" name="note" maxlength="1000" rows="2" placeholder="Añade un detalle si lo necesitas"></textarea>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn btn-primary" type="submit" id="saveEntry">Guardar anotación</button>
-        <button class="btn btn-secondary" type="button" id="cancelEdit" hidden>Cancelar edición</button>
-      </div>
-    </form>
-  </section>
-
-  <div class="section-label">Organización</div>
-  <section class="card" id="accountsSection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Mis cuentas</h2>
-        <p>Cada libreta mantiene sus propios movimientos y recordatorios.</p>
-      </div>
-    </div>
-    <div class="notebook-row">
-      <div class="field">
-        <label for="notebookSelect">Libreta activa</label>
-        <select id="notebookSelect" aria-label="Seleccionar libreta"></select>
-        <p class="hint" style="margin:0">Actual: <strong id="activeNotebookName">Mi negocio</strong></p>
-      </div>
-      <div class="notebook-actions">
-        <button class="btn btn-secondary btn-small" type="button" id="newNotebook">Nueva libreta</button>
-        <button class="btn btn-secondary btn-small" type="button" id="renameNotebook">Cambiar nombre</button>
-        <button class="btn btn-danger btn-small" type="button" id="deleteNotebook">Borrar libreta</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="card" id="summarySection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Resumen de tus cuentas</h2>
-        <p>Consulta tus cifras por mes y por año.</p>
-      </div>
-    </div>
-    <div class="filter-row">
-      <div class="field">
-        <label for="summaryMonth">Mes</label>
-        <input id="summaryMonth" type="month">
-      </div>
-      <div class="field">
-        <label for="summaryYear">Año</label>
-        <input id="summaryYear" type="number" min="2000" max="2200" step="1" inputmode="numeric">
-      </div>
-    </div>
-    <div class="subsection">
-      <div class="subsection-head"><h3>Resumen mensual</h3></div>
-      <div class="stats-grid" id="summaryCards" aria-live="polite">
-        <div class="stat"><span class="stat-label">Ingresos del mes</span><span class="stat-value">$0.00</span></div>
-        <div class="stat"><span class="stat-label">Salidas registradas</span><span class="stat-value">$0.00</span></div>
-        <div class="stat"><span class="stat-label">Diferencia registrada</span><span class="stat-value">$0.00</span></div>
-      </div>
-    </div>
-    <div class="subsection">
-      <div class="subsection-head"><h3>Resumen anual</h3></div>
-      <div class="stats-grid" id="yearSummary" aria-live="polite">
-        <div class="stat"><span class="stat-label">Ingresos del año</span><span class="stat-value">$0.00</span></div>
-        <div class="stat"><span class="stat-label">Salidas del año</span><span class="stat-value">$0.00</span></div>
-        <div class="stat"><span class="stat-label">Diferencia del año</span><span class="stat-value">$0.00</span></div>
-      </div>
-    </div>
-    <p class="summary-disclaimer" id="summaryDisclaimer">Los totales reflejan únicamente las anotaciones de esta libreta. No verifican que los datos estén completos y no constituyen un informe contable certificado ni una declaración fiscal.</p>
-    <div class="actions">
-      <button class="btn btn-secondary" type="button" id="printSummary">Imprimir resumen</button>
-    </div>
-  </section>
-
-  <div class="section-label">Historial</div>
-  <section class="card" id="recordsSection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Mis anotaciones</h2>
-        <p>Corrige una anotación o elimínala si ya no la necesitas.</p>
-      </div>
-    </div>
-    <div class="entries-list" id="entriesList" aria-live="polite">
-      <div class="empty-state">Todavía no hay anotaciones en esta libreta.</div>
-    </div>
-    <div class="actions">
-      <button class="btn btn-secondary" type="button" id="printAllRecords">Imprimir anotaciones</button>
-      <button class="btn btn-secondary" type="button" id="exportCSV">Exportar CSV</button>
-    </div>
-  </section>
-
-  <div class="section-label">Organización diaria</div>
-  <section class="card" id="remindersSection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Mis recordatorios</h2>
-        <p>Anota lo que debes hacer y marca cada pendiente cuando lo termines.</p>
-      </div>
-    </div>
-    <h3>Agregar un recordatorio</h3>
-    <form id="reminderForm">
-      <div class="form-grid">
-        <div class="field full">
-          <label for="reminderTitle">¿Qué necesitas recordar?</label>
-          <input id="reminderTitle" name="title" maxlength="180" placeholder="Ej.: pagar una factura" required>
-        </div>
-        <div class="field">
-          <label for="reminderDate">Fecha (opcional)</label>
-          <input id="reminderDate" name="date" type="date">
-        </div>
-        <div class="field">
-          <label for="reminderNote">Detalle (opcional)</label>
-          <input id="reminderNote" name="note" maxlength="500" placeholder="Una nota breve">
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn btn-primary" type="submit">Guardar recordatorio</button>
-      </div>
-    </form>
-    <div class="subsection">
-      <div class="subsection-head"><h3>Tu lista de pendientes</h3></div>
-      <div class="reminders-list" id="remindersList" aria-live="polite">
-        <div class="empty-state">No tienes recordatorios anotados.</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="section-label">Cuidado de tus datos</div>
-  <section class="card" id="backupSection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Copias y archivos</h2>
-        <p>Guarda una copia para poder recuperar tus anotaciones.</p>
-      </div>
-    </div>
-    <h3>Copia de seguridad</h3>
-    <p class="muted">La copia contiene los datos de las libretas de esta aplicación. Guárdala en un lugar protegido.</p>
-    <div class="backup-actions">
-      <button class="btn btn-primary" type="button" id="exportBackup">Crear copia de seguridad</button>
-      <label class="btn btn-secondary" for="importFile">Elegir copia para restaurar</label>
-      <input class="file-input" id="importFile" type="file" accept=".json,application/json" aria-label="Seleccionar archivo de copia de seguridad">
-      <button class="btn btn-secondary" type="button" id="importBackupButton" hidden disabled>Restaurar copia</button>
-    </div>
-    <p class="hint" style="margin-top:12px">Restaurar una copia reemplaza los datos actuales de esta aplicación en este navegador. Conserva primero una copia de lo que tienes ahora.</p>
-    <details>
-      <summary>¿Qué incluye la copia?</summary>
-      <div class="details-body">
-        <p>Incluye los datos que la aplicación exporta de tus libretas, anotaciones, recordatorios y configuración. El archivo puede contener información financiera privada. No lo compartas públicamente.</p>
-      </div>
-    </details>
-  </section>
-
-  <section class="card danger-zone">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Borrar los datos locales</h2>
-        <p>Esta acción elimina los datos guardados por esta aplicación en este navegador.</p>
-      </div>
-    </div>
-    <p class="disclosure">Borrar los datos locales no se puede deshacer. Si quieres conservarlos, crea primero una copia de seguridad.</p>
-    <button class="btn btn-danger" type="button" id="eraseAll">Borrar todos los datos locales</button>
-  </section>
-
-  <div class="section-label">Información</div>
-  <section class="card" id="aboutSection">
-    <div class="card-head">
-      <div>
-        <h2 class="section-title">Acerca de tu libreta</h2>
-        <p>Información clara para utilizarla con confianza.</p>
-      </div>
-    </div>
-    <details open>
-      <summary>¿Dónde se guardan mis anotaciones?</summary>
-      <div class="details-body" id="privacyDetails">
-        <p>Los registros se guardan en el almacenamiento local del navegador mediante IndexedDB. Esta aplicación no necesita enviar tus anotaciones financieras al servidor para calcular los resúmenes.</p>
-        <p>El almacenamiento local no equivale a un archivo cifrado y puede perderse si borras los datos del navegador, el perfil o el dispositivo. Otras personas con acceso a tu sesión o dispositivo podrían llegar a verlos.</p>
-      </div>
-    </details>
-    <details>
-      <summary>¿Qué significan los totales?</summary>
-      <div class="details-body">
-        <p>Los totales reflejan lo que hayas anotado. Las salidas incluyen compras, gastos, pagos y pérdidas. Las reservas y las deudas se muestran por separado para no tratarlas automáticamente como ingresos o salidas pagadas.</p>
-        <p>El dinero registrado hoy representa ingresos y ventas anotados para la fecha actual; no equivale necesariamente al efectivo disponible ni al saldo de una cuenta bancaria. Revisa tus datos antes de tomar decisiones.</p>
-      </div>
-    </details>
-    <details>
-      <summary>¿Es un documento contable o fiscal certificado?</summary>
-      <div class="details-body">
-        <p>No. Los resúmenes son herramientas de organización personal y de negocio. No verifican que los datos estén completos y no constituyen una auditoría, declaración fiscal ni informe contable certificado.</p>
-      </div>
-    </details>
-    <details>
-      <summary>¿Qué debo saber sobre las copias de seguridad?</summary>
-      <div class="details-body">
-        <p>La copia se descarga en tu dispositivo. Protégela como cualquier documento que contenga información financiera. Al restaurar una copia, los datos actuales de la aplicación pueden ser reemplazados.</p>
-      </div>
-    </details>
-  </section>
+<section class="screen active" id="homeSection" aria-labelledby="homeTitle">
+<div class="home-hero">
+<p class="eyebrow">Tu espacio personal</p>
+<h2 id="homeTitle">Tu dinero, claro y organizado.</h2>
+<p>Registra lo que recibes, gastas, guardas y pagas. Consulta tus números cuando los necesites.</p>
+</div>
+<div class="today-card">
+<div class="today-label">Movimientos de hoy</div>
+<div class="today-amount" id="todayMoneyTotal">$0.00</div>
+<p class="today-foot">Importe de los ingresos registrados para la fecha de hoy.</p>
+<div class="home-status">
+<strong id="homeStatus">Tu libreta está lista.</strong>
+<span id="homeStatusDetail">Añade una anotación para empezar.</span>
+</div>
+</div>
+<div class="card">
+<div class="field">
+<label for="homeNotebookName">Libreta actual</label>
+<input id="homeNotebookName" type="text" value="Mi libreta" readonly aria-readonly="true">
+</div>
+<button class="secondary-button" type="button" data-go="accountsSection" style="width:100%">Ver mis libretas</button>
+</div>
+<div class="section-heading">
+<h2>¿Qué deseas hacer?</h2>
+<p>Toca una opción para abrir únicamente esa ventana.</p>
+</div>
+<div class="action-grid">
+<button class="action-card" type="button" data-go="entrySection" data-entry-type="income">
+<span class="action-icon" aria-hidden="true">＋</span><strong>Registrar dinero</strong><small>Anotar ingresos, compras, gastos, pagos y otros movimientos.</small>
+</button>
+<button class="action-card" type="button" data-go="summarySection">
+<span class="action-icon" aria-hidden="true">▤</span><strong>Ver mis resúmenes</strong><small>Consultar resultados diarios, semanales, mensuales y anuales.</small>
+</button>
+<button class="action-card" type="button" data-go="accountsSection">
+<span class="action-icon" aria-hidden="true">▣</span><strong>Mi dinero</strong><small>Organizar libretas y revisar la información registrada.</small>
+</button>
+<button class="action-card" type="button" data-go="recordsSection">
+<span class="action-icon" aria-hidden="true">☷</span><strong>Mis anotaciones</strong><small>Consultar, buscar, editar o eliminar registros.</small>
+</button>
+<button class="action-card" type="button" data-go="remindersSection">
+<span class="action-icon" aria-hidden="true">◷</span><strong>Recordatorios</strong><small>Apuntar facturas, cobros y fechas importantes.</small>
+</button>
+<button class="action-card" type="button" data-go="backupSection">
+<span class="action-icon" aria-hidden="true">↥</span><strong>Copias y privacidad</strong><small>Guardar una copia, restaurar o imprimir información.</small>
+</button>
+</div>
+<div class="home-footer">La libreta organiza tus anotaciones. Comprueba tus saldos reales antes de tomar decisiones.</div>
+</section>
+<section class="screen" id="entrySection" aria-labelledby="entryHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="entryHeading">Registrar movimiento</h2><p>Solo necesitas los datos principales.</p></div>
+</div>
+<div class="card">
+<h3 id="entryFormTitle">Nueva anotación</h3>
+<form id="entryForm">
+<div class="field">
+<label for="entryType">¿Qué deseas anotar?</label>
+<select id="entryType" name="type" required>
+<option value="income">Dinero recibido / ingreso</option>
+<option value="expense">Gasto</option>
+<option value="purchase">Compra</option>
+<option value="payment">Pago realizado</option>
+<option value="debt">Deuda pendiente</option>
+<option value="reserve">Dinero reservado o ahorrado</option>
+<option value="investment">Inversión</option>
+<option value="loss">Pérdida</option>
+<option value="transfer">Transferencia entre mis cuentas</option>
+</select>
+</div>
+<div class="field-grid">
+<div class="field">
+<label for="entryAmount">Importe ($)</label>
+<input id="entryAmount" name="amount" type="number" inputmode="decimal" min="0.01" max="999999999" step="0.01" placeholder="0.00" required>
+</div>
+<div class="field">
+<label for="entryDate">Fecha</label>
+<input id="entryDate" name="date" type="date" required>
+</div>
+</div>
+<div class="field-grid">
+<div class="field">
+<label for="entryCategory">Categoría</label>
+<input id="entryCategory" name="category" type="text" maxlength="80" placeholder="Ej.: comida, trabajo">
+</div>
+<div class="field">
+<label for="entryMethod">¿Dónde o cómo?</label>
+<select id="entryMethod" name="method">
+<option value="cash">Efectivo</option>
+<option value="bank">Banco</option>
+<option value="card">Tarjeta</option>
+<option value="savings">Ahorros</option>
+<option value="other">Otro / no especificado</option>
+</select>
+</div>
+</div>
+<div class="field">
+<label for="entryNote">Nota (opcional)</label>
+<textarea id="entryNote" name="note" maxlength="1000" placeholder="Escribe un detalle que quieras recordar."></textarea>
+</div>
+<div class="form-actions">
+<button class="primary-button" type="submit" id="saveEntry">Guardar anotación</button>
+<button class="secondary-button hidden" type="button" id="cancelEdit">Cancelar edición</button>
+</div>
+<p class="hint">Anota cada operación una sola vez. Una transferencia entre tus propias cuentas no es un ingreso nuevo.</p>
+</form>
+</div>
+</section>
+<section class="screen" id="accountsSection" aria-labelledby="accountsHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="accountsHeading">Mis libretas y dinero</h2><p>Organiza tus anotaciones sin complicaciones.</p></div>
+</div>
+<div class="card">
+<h3>Libreta que estás usando</h3>
+<div class="field">
+<label for="notebookSelect">Seleccionar libreta</label>
+<select id="notebookSelect" aria-label="Seleccionar libreta"></select>
+</div>
+<p class="hint">Libreta activa: <strong id="activeNotebookName">Mi libreta</strong></p>
+<div class="toolbar">
+<button class="secondary-button" type="button" id="newNotebook">Nueva libreta</button>
+<button class="secondary-button" type="button" id="renameNotebook">Cambiar nombre</button>
+<button class="danger-button" type="button" id="deleteNotebook">Eliminar libreta</button>
+</div>
+</div>
+<div class="card">
+<h3>¿Dónde está tu dinero?</h3>
+<p class="hint">Consulta aquí tus anotaciones. El saldo real de efectivo, banco o ahorros solo será exacto si registras los saldos iniciales y todos los movimientos correspondientes.</p>
+<div class="account-balance">
+<div class="summary-card"><span>Ingresos registrados</span><strong id="accountIncomeTotal">$0.00</strong></div>
+<div class="summary-card"><span>Gastos y pagos registrados</span><strong id="accountOutflowTotal">$0.00</strong></div>
+<div class="summary-card highlight"><span>Resultado registrado</span><strong id="accountNetTotal">$0.00</strong></div>
+</div>
+<p class="hint">Estos indicadores son informativos y no sustituyen el saldo de tu banco. Las cifras se actualizarán cuando el archivo app.js implemente y conecte estos indicadores.</p>
+</div>
+</section>
+<section class="screen" id="summarySection" aria-labelledby="summaryHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="summaryHeading">Mis resúmenes</h2><p>Comprende tus movimientos de un vistazo.</p></div>
+</div>
+<div class="card">
+<div class="summary-controls">
+<div class="field">
+<label for="summaryMonth">Mes</label>
+<select id="summaryMonth">
+<option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option><option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option><option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+</select>
+</div>
+<div class="field">
+<label for="summaryYear">Año</label>
+<input id="summaryYear" type="number" min="2000" max="2100" step="1" inputmode="numeric">
+</div>
+</div>
+<div class="toolbar">
+<button class="secondary-button" type="button" data-summary-period="day">Diario</button>
+<button class="secondary-button" type="button" data-summary-period="week">Semanal</button>
+<button class="secondary-button" type="button" data-summary-period="month">Mensual</button>
+<button class="secondary-button" type="button" data-summary-period="year">Anual</button>
+</div>
+<p id="summaryPeriodLabel" class="hint">Resumen del período seleccionado.</p>
+<div class="summary-grid" id="summaryCards">
+<div class="summary-card positive"><span>Ingresos recibidos</span><strong id="summaryIncome">$0.00</strong></div>
+<div class="summary-card"><span>Compras</span><strong id="summaryPurchases">$0.00</strong></div>
+<div class="summary-card"><span>Gastos</span><strong id="summaryExpenses">$0.00</strong></div>
+<div class="summary-card"><span>Pagos realizados</span><strong id="summaryPayments">$0.00</strong></div>
+<div class="summary-card"><span>Pérdidas</span><strong id="summaryLosses">$0.00</strong></div>
+<div class="summary-card"><span>Dinero reservado</span><strong id="summaryReserves">$0.00</strong></div>
+<div class="summary-card"><span>Deudas anotadas</span><strong id="summaryDebts">$0.00</strong></div>
+<div class="summary-card highlight"><span>Resultado neto registrado</span><strong id="summaryNet">$0.00</strong></div>
+</div>
+</div>
+<div class="card">
+<h3>Resumen anual</h3>
+<div class="summary-grid" id="yearSummary">
+<div class="summary-card"><span>Ingresos del año</span><strong id="yearIncome">$0.00</strong></div>
+<div class="summary-card"><span>Gastos del año</span><strong id="yearExpenses">$0.00</strong></div>
+<div class="summary-card highlight"><span>Resultado anual</span><strong id="yearNet">$0.00</strong></div>
+</div>
+</div>
+<div class="disclaimer" id="summaryDisclaimer">El resultado neto se calcula a partir de las operaciones que hayas registrado. Las deudas, reservas, inversiones y transferencias deben tratarse por separado para evitar sumas engañosas. Un resumen correcto depende de que cada tipo de operación tenga una regla de cálculo definida en app.js.</div>
+<div class="toolbar">
+<button class="secondary-button" type="button" id="printSummary">Imprimir resumen</button>
+<button class="secondary-button" type="button" data-go="recordsSection">Ver anotaciones</button>
+</div>
+</section>
+<section class="screen" id="recordsSection" aria-labelledby="recordsHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="recordsHeading">Mis anotaciones</h2><p>Revisa los movimientos guardados.</p></div>
+</div>
+<div class="card">
+<div class="field">
+<label for="recordsSearch">Buscar anotación</label>
+<input id="recordsSearch" type="search" placeholder="Buscar por nota, categoría o tipo">
+</div>
+<div class="field-grid">
+<div class="field">
+<label for="recordsTypeFilter">Tipo</label>
+<select id="recordsTypeFilter">
+<option value="">Todos los movimientos</option>
+<option value="income">Ingresos</option>
+<option value="expense">Gastos</option>
+<option value="purchase">Compras</option>
+<option value="payment">Pagos</option>
+<option value="debt">Deudas</option>
+<option value="reserve">Reservas y ahorros</option>
+<option value="investment">Inversiones</option>
+<option value="loss">Pérdidas</option>
+<option value="transfer">Transferencias</option>
+</select>
+</div>
+<div class="field">
+<label for="recordsDateFilter">Fecha</label>
+<input id="recordsDateFilter" type="date">
+</div>
+</div>
+<div class="toolbar">
+<button class="secondary-button" type="button" id="clearRecordFilters">Limpiar filtros</button>
+<button class="primary-button" type="button" data-go="entrySection" data-entry-type="income">＋ Nueva anotación</button>
+</div>
+<div id="entriesList" class="list">
+<div class="empty-state">Tus anotaciones aparecerán aquí cuando se carguen los datos.</div>
+</div>
+</div>
+<div class="toolbar">
+<button class="secondary-button" type="button" id="printAllRecords">Imprimir anotaciones</button>
+<button class="secondary-button" type="button" id="exportCSV">Exportar CSV</button>
+</div>
+</section>
+<section class="screen" id="remindersSection" aria-labelledby="remindersHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="remindersHeading">Mis recordatorios</h2><p>Fechas importantes en un solo lugar.</p></div>
+</div>
+<div class="card">
+<h3 id="reminderFormTitle">Nuevo recordatorio</h3>
+<form id="reminderForm">
+<div class="field">
+<label for="reminderTitle">¿Qué necesitas recordar?</label>
+<input id="reminderTitle" name="title" type="text" maxlength="160" placeholder="Ej.: pagar la factura de electricidad" required>
+</div>
+<div class="field">
+<label for="reminderDate">Fecha</label>
+<input id="reminderDate" name="date" type="date" required>
+</div>
+<div class="field">
+<label for="reminderNote">Nota (opcional)</label>
+<textarea id="reminderNote" name="note" maxlength="1000" placeholder="Añade un detalle si lo necesitas."></textarea>
+</div>
+<div class="form-actions">
+<button class="primary-button" type="submit" id="saveReminder">Guardar recordatorio</button>
+<button class="secondary-button hidden" type="button" id="cancelReminderEdit">Cancelar edición</button>
+</div>
+</form>
+</div>
+<div class="card">
+<h3>Recordatorios guardados</h3>
+<div id="remindersList" class="list">
+<div class="empty-state">Tus recordatorios aparecerán aquí cuando se carguen los datos.</div>
+</div>
+</div>
+</section>
+<section class="screen" id="backupSection" aria-labelledby="backupHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="backupHeading">Copias y privacidad</h2><p>Cuida tus anotaciones y conserva una copia.</p></div>
+</div>
+<div class="card">
+<h3>Guardar una copia</h3>
+<p class="hint">Descarga un archivo con los datos que admite la función de copia de seguridad.</p>
+<button class="primary-button" type="button" id="exportBackup" style="width:100%">Descargar copia de seguridad</button>
+</div>
+<div class="card">
+<h3>Restaurar una copia</h3>
+<p class="hint">Selecciona una copia válida creada por esta aplicación. Restaurar puede reemplazar los datos actuales; guarda una copia antes de continuar.</p>
+<div class="field">
+<label for="importFile">Archivo de copia de seguridad</label>
+<input id="importFile" type="file" accept=".json,application/json">
+</div>
+<button class="secondary-button" type="button" id="importBackupButton" style="width:100%">Restaurar copia seleccionada</button>
+</div>
+<div class="card">
+<h3>Imprimir</h3>
+<p class="hint">Puedes imprimir los resúmenes o tus anotaciones desde sus respectivas ventanas.</p>
+<button class="secondary-button" type="button" data-go="summarySection" style="width:100%">Abrir mis resúmenes</button>
+</div>
+<div class="card">
+<h3>Privacidad y eliminación</h3>
+<p class="hint">Los datos de esta aplicación se guardan en el almacenamiento local del navegador. No equivalen a una copia en la nube. Si borras los datos del navegador o cambias de dispositivo, podrías perderlos si no guardaste una copia.</p>
+<button class="secondary-button" type="button" id="openPrivacy" style="width:100%">Leer aviso de privacidad</button>
+<button class="danger-button" type="button" id="eraseAll" style="width:100%;margin-top:10px">Borrar todos mis datos</button>
+</div>
+</section>
+<section class="screen" id="aboutSection" aria-labelledby="aboutHeading">
+<div class="screen-header">
+<button class="back-button" type="button" data-go="homeSection" aria-label="Volver al inicio">←</button>
+<div><h2 id="aboutHeading">Información</h2><p>Uso de LIBRETA PRIVADA.</p></div>
+</div>
+<div class="card">
+<h3>Una libreta para tus números</h3>
+<p>LIBRETA PRIVADA, de May Roga LLC, sirve para anotar movimientos y organizar información personal. Los resultados dependen de la exactitud y la integridad de tus registros.</p>
+<button class="secondary-button" type="button" id="openLegal" style="width:100%">Leer aviso legal</button>
+<button class="secondary-button" type="button" id="openPrivacyFromAbout" style="width:100%;margin-top:9px">Leer aviso de privacidad</button>
+</div>
+</section>
 </main>
-
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">LIBRETA PRIVADA · MAY ROGA LLC</div>
-    <nav class="footer-links" aria-label="Información legal">
-      <button type="button" id="openLegal">Aviso legal</button>
-      <a href="#privacyDetails">Privacidad</a>
-      <a href="#aboutSection">Información</a>
-    </nav>
-  </div>
+<footer class="app-bottom">
+<button type="button" id="helpToggle" aria-expanded="false" aria-controls="quickHelp">Ayuda</button>
+<button type="button" data-go="aboutSection">Información y avisos</button>
 </footer>
-
-<dialog id="legalDialog" aria-labelledby="legalDialogTitle">
-  <div class="dialog-head">
-    <h2 id="legalDialogTitle">Aviso legal</h2>
-    <button class="btn btn-secondary btn-small" type="button" id="closeLegal">Cerrar</button>
-  </div>
-  <div class="dialog-body">
-    <h3>Herramienta de organización</h3>
-    <p>LIBRETA PRIVADA, de MAY ROGA LLC, es una herramienta para registrar y organizar información introducida por el usuario.</p>
-    <h3>Exactitud de la información</h3>
-    <p>Los resultados dependen de las anotaciones que introduzcas. La aplicación no verifica movimientos bancarios, cobros, pagos, saldos ni la integridad de tus registros.</p>
-    <h3>No sustituye asesoramiento profesional</h3>
-    <p>Los resúmenes no son asesoramiento financiero, legal o fiscal, ni una declaración fiscal, auditoría o informe contable certificado. Comprueba tus cifras antes de utilizarlas para tomar decisiones.</p>
-    <h3>Responsabilidad sobre los registros</h3>
-    <p>El usuario es responsable de revisar sus anotaciones y proteger sus copias de seguridad. El almacenamiento local puede perderse al borrar los datos del navegador o cambiar de dispositivo.</p>
-    <div class="actions"><button class="btn btn-primary" type="button" id="legalDone" onclick="document.getElementById('legalDialog').close()">Entendido</button></div>
-  </div>
+<div id="quickHelp" class="card hidden">
+<h3>Cómo usar la libreta</h3>
+<p class="hint">1. Registra cada movimiento una sola vez. 2. Usa la fecha real de la operación. 3. Consulta los resúmenes para el período que te interesa. 4. Guarda copias periódicamente. 5. No registres contraseñas bancarias ni datos completos de tarjetas.</p>
+</div>
+<dialog id="legalDialog" class="dialog" aria-labelledby="legalTitle">
+<h2 id="legalTitle">Aviso legal</h2>
+<p>LIBRETA PRIVADA es una herramienta de registro personal de May Roga LLC. No es un banco, asesor financiero, servicio de inversión, preparador de impuestos ni sistema contable certificado.</p>
+<p>Los resultados dependen de los datos introducidos y de las reglas de cálculo de la aplicación. Comprueba los saldos y documentos oficiales antes de tomar decisiones financieras, fiscales o comerciales.</p>
+<div class="dialog-actions"><button class="primary-button" type="button" id="closeLegal">Entendido</button></div>
 </dialog>
-
-<dialog id="privacyDialog" aria-labelledby="privacyDialogTitle">
-  <div class="dialog-head">
-    <h2 id="privacyDialogTitle">Privacidad de tus datos</h2>
-    <button class="btn btn-secondary btn-small" type="button" id="closePrivacy">Cerrar</button>
-  </div>
-  <div class="dialog-body">
-    <h3>Almacenamiento local</h3>
-    <p>Las anotaciones se guardan en IndexedDB dentro del navegador y dispositivo que utilizas. La aplicación calcula los resúmenes a partir de esos datos locales.</p>
-    <h3>Límites de la privacidad</h3>
-    <p>El almacenamiento local no garantiza cifrado. Las personas que tengan acceso al dispositivo o al perfil del navegador podrían acceder a la información. Evita utilizar un dispositivo compartido si necesitas mantener tus anotaciones privadas.</p>
-    <h3>Copias y eliminación</h3>
-    <p>Los archivos exportados pueden contener información sensible. Guárdalos en un lugar protegido. Puedes usar la opción de borrado local para eliminar los datos de la aplicación en este navegador; esa acción no se puede deshacer.</p>
-    <p>La eliminación de los datos del navegador, el perfil o el dispositivo también puede hacer que pierdas tus anotaciones. Conserva una copia si necesitas recuperarlas.</p>
-    <div class="actions"><button class="btn btn-primary" type="button" id="privacyDone" onclick="document.getElementById('privacyDialog').close()">Entendido</button></div>
-  </div>
+<dialog id="privacyDialog" class="dialog" aria-labelledby="privacyTitle">
+<h2 id="privacyTitle">Aviso de privacidad</h2>
+<p>Las anotaciones de esta versión están destinadas a guardarse localmente en el navegador mediante IndexedDB. No significa que exista una copia de seguridad remota.</p>
+<ul>
+<li>Protege el acceso al dispositivo y al perfil del navegador.</li>
+<li>No guardes contraseñas, números completos de tarjetas ni códigos de seguridad.</li>
+<li>Descarga una copia si necesitas conservar tus datos o trasladarlos a otro dispositivo.</li>
+<li>Antes de restaurar una copia, comprueba que el archivo sea el correcto.</li>
+</ul>
+<div class="dialog-actions"><button class="primary-button" type="button" id="closePrivacy">Entendido</button></div>
 </dialog>
-
+</div>
 <script defer src="/static/storage.js"></script>
 <script defer src="/static/app.js"></script>
-<script>
-/* Sin lógica financiera inline. Estos manejadores solo permiten abrir y cerrar los avisos. */
-document.addEventListener("DOMContentLoaded",function(){
-  const legal=document.getElementById("legalDialog");
-  const privacy=document.getElementById("privacyDialog");
-  const openLegal=document.getElementById("openLegal");
-  const closeLegal=document.getElementById("closeLegal");
-  const openPrivacy=document.getElementById("openPrivacy");
-  const closePrivacy=document.getElementById("closePrivacy");
-  if(openLegal&&legal)openLegal.addEventListener("click",()=>{if(!legal.open)legal.showModal()});
-  if(closeLegal&&legal)closeLegal.addEventListener("click",()=>{if(legal.open)legal.close()});
-  if(openPrivacy&&privacy)openPrivacy.addEventListener("click",()=>{if(!privacy.open)privacy.showModal()});
-  if(closePrivacy&&privacy)closePrivacy.addEventListener("click",()=>{if(privacy.open)privacy.close()});
-  for(const dlg of [legal,privacy]){
-    if(dlg)dlg.addEventListener("click",event=>{if(event.target===dlg)dlg.close()});
-  }
-});
-</script>
 </body>
 </html>
