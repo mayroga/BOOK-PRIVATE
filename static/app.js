@@ -14,18 +14,33 @@
     reserve: "Dinero reservado",
     loss: "Pérdida"
   };
-
   let activeNotebookId = null;
   let editingEntryId = null;
   let entriesCache = [];
+  let remindersCache = [];
 
-  const today = () => new Date().toISOString().slice(0, 10);
-  const money = value => new Intl.NumberFormat("es-US", {
-    style: "currency", currency: "USD"
-  }).format(Number(value) || 0);
+  function today() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  function money(value) {
+    return new Intl.NumberFormat("es-US", {
+      style: "currency",
+      currency: "USD"
+    }).format(Number(value) || 0);
+  }
+
+  function roundMoney(value) {
+    return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+  }
 
   function message(text, isError = false) {
     const el = $("message");
+    if (!el) {
+      if (isError) console.error(text);
+      return;
+    }
     el.textContent = text;
     el.className = isError ? "message error" : "message";
     el.hidden = false;
@@ -39,10 +54,17 @@
   }
 
   function addOption(select, value, text) {
+    if (!select) return;
     const option = document.createElement("option");
     option.value = value;
     option.textContent = text;
     select.appendChild(option);
+  }
+
+  function on(id, eventName, callback) {
+    const el = $(id);
+    if (el) el.addEventListener(eventName, callback);
+    return el;
   }
 
   function monthOf(date) {
@@ -55,9 +77,18 @@
 
   function calculate(items) {
     const result = {
-      income: 0, cashIncome: 0, cardIncome: 0, otherIncome: 0,
-      purchases: 0, expenses: 0, payments: 0, losses: 0,
-      outflow: 0, reserves: 0, debts: 0, net: 0
+      income: 0,
+      cashIncome: 0,
+      cardIncome: 0,
+      otherIncome: 0,
+      purchases: 0,
+      expenses: 0,
+      payments: 0,
+      losses: 0,
+      outflow: 0,
+      reserves: 0,
+      debts: 0,
+      net: 0
     };
 
     for (const item of items) {
@@ -96,7 +127,7 @@
 
     result.net = result.income - result.outflow;
     for (const key of Object.keys(result)) {
-      result[key] = Math.round((result[key] + Number.EPSILON) * 100) / 100;
+      result[key] = roundMoney(result[key]);
     }
     return result;
   }
@@ -109,48 +140,108 @@
     return box;
   }
 
+  function renderTodayTotal() {
+    const totalElement = $("todayMoneyTotal");
+    if (!totalElement) return;
+
+    // La cifra principal representa ingresos/ventas anotados hoy.
+    // No incluye deudas ni reservas y no usa cifras ficticias.
+    const date = today();
+    const total = roundMoney(
+      entriesCache
+        .filter(entry => entry.date === date && entry.type === "income")
+        .reduce((sum, entry) => sum + (Number(entry.amount) || 0), 0)
+    );
+    totalElement.textContent = money(total);
+    totalElement.setAttribute("aria-live", "polite");
+  }
+
+  function renderHomeStatus() {
+    const status = $("homeStatus");
+    if (!status) return;
+
+    const pending = remindersCache.filter(item => !item.done);
+    const overdue = pending.filter(item => item.dueDate < today());
+    const dueToday = pending.filter(item => item.dueDate === today());
+
+    if (overdue.length) {
+      status.textContent = overdue.length === 1
+        ? "Tienes un recordatorio pendiente de días anteriores."
+        : `Tienes ${overdue.length} recordatorios pendientes de días anteriores.`;
+    } else if (dueToday.length) {
+      status.textContent = dueToday.length === 1
+        ? "Tienes un recordatorio para hoy."
+        : `Tienes ${dueToday.length} recordatorios para hoy.`;
+    } else if (pending.length) {
+      status.textContent = "Tus recordatorios están organizados.";
+    } else {
+      status.textContent = "Todo tranquilo por ahora";
+    }
+
+    const detail = $("homeStatusDetail");
+    if (detail) {
+      detail.textContent = overdue.length
+        ? "Revisa los pendientes y marca los que hayas completado."
+        : dueToday.length
+          ? "Puedes revisar tus pendientes en Mis recordatorios."
+          : pending.length
+            ? "Aquí aparecerán avisos importantes cuando los necesites."
+            : "Aquí aparecerán tus avisos importantes cuando los necesites.";
+    }
+  }
+
   function renderSummary() {
-    const month = $("summaryMonth").value || today().slice(0, 7);
-    const year = $("summaryYear").value || today().slice(0, 4);
+    const monthSelect = $("summaryMonth");
+    const yearSelect = $("summaryYear");
+    const month = (monthSelect && monthSelect.value) || today().slice(0, 7);
+    const year = (yearSelect && yearSelect.value) || today().slice(0, 4);
     const monthly = calculate(entriesCache.filter(e => monthOf(e.date) === month));
-    const annual = calculate(entriesCache.filter(e => yearOf(e.date) === year));
+    const annual = calculate(entriesCache.filter(e => yearOf(e.date) === String(year)));
     const monthBox = $("summaryCards");
     const yearBox = $("yearSummary");
 
-    monthBox.replaceChildren(
-      card("Ingresos del mes", money(monthly.income)),
-      card("Salidas registradas", money(monthly.outflow),
-        "Compras, gastos, pagos y pérdidas anotadas"),
-      card("Diferencia registrada", money(monthly.net),
-        "Ingresos menos salidas anotadas"),
-      card("Ventas en efectivo", money(monthly.cashIncome)),
-      card("Ventas con tarjeta", money(monthly.cardIncome)),
-      card("Otros ingresos", money(monthly.otherIncome)),
-      card("Dinero reservado", money(monthly.reserves),
-        "Se muestra aparte; no se resta automáticamente"),
-      card("Deudas anotadas", money(monthly.debts),
-        "No significa que se hayan cobrado o pagado")
-    );
+    if (monthBox) {
+      monthBox.replaceChildren(
+        card("Ingresos del mes", money(monthly.income)),
+        card("Salidas registradas", money(monthly.outflow),
+          "Compras, gastos, pagos y pérdidas anotadas"),
+        card("Diferencia registrada", money(monthly.net),
+          "Ingresos menos salidas anotadas"),
+        card("Ventas en efectivo", money(monthly.cashIncome)),
+        card("Ventas con tarjeta", money(monthly.cardIncome)),
+        card("Otros ingresos", money(monthly.otherIncome)),
+        card("Dinero reservado", money(monthly.reserves),
+          "Se muestra aparte; no se resta automáticamente"),
+        card("Deudas anotadas", money(monthly.debts),
+          "No significa que se hayan cobrado o pagado")
+      );
+    }
 
-    yearBox.replaceChildren(
-      card("Ingresos del año", money(annual.income)),
-      card("Salidas del año", money(annual.outflow)),
-      card("Diferencia del año", money(annual.net)),
-      card("Compras del año", money(annual.purchases)),
-      card("Gastos del año", money(annual.expenses)),
-      card("Pagos anotados", money(annual.payments)),
-      card("Pérdidas anotadas", money(annual.losses)),
-      card("Dinero reservado", money(annual.reserves))
-    );
+    if (yearBox) {
+      yearBox.replaceChildren(
+        card("Ingresos del año", money(annual.income)),
+        card("Salidas del año", money(annual.outflow)),
+        card("Diferencia del año", money(annual.net)),
+        card("Compras del año", money(annual.purchases)),
+        card("Gastos del año", money(annual.expenses)),
+        card("Pagos anotados", money(annual.payments)),
+        card("Pérdidas anotadas", money(annual.losses)),
+        card("Dinero reservado", money(annual.reserves))
+      );
+    }
 
-    $("summaryDisclaimer").textContent =
-      `Resumen de ${month} y ${year}. Refleja únicamente las anotaciones ` +
-      "conservadas en esta libreta. No verifica que estén completas y no " +
-      "es una declaración fiscal ni un informe contable certificado.";
+    const disclaimer = $("summaryDisclaimer");
+    if (disclaimer) {
+      disclaimer.textContent =
+        `Resumen de ${month} y ${year}. Refleja únicamente las anotaciones ` +
+        "conservadas en esta libreta. No verifica que estén completas y no " +
+        "es una declaración fiscal ni un informe contable certificado.";
+    }
   }
 
   function renderEntries() {
     const list = $("entriesList");
+    if (!list) return;
     list.replaceChildren();
 
     if (!entriesCache.length) {
@@ -164,10 +255,14 @@
       info.append(element("strong", LABELS[entry.type] || "Movimiento"));
       info.append(element("span",
         `${entry.date} · ${entry.category || "Sin categoría"}`));
+
       const method = {
-        cash: "Efectivo", card: "Tarjeta",
-        transfer: "Transferencia", other: "Otro método"
+        cash: "Efectivo",
+        card: "Tarjeta",
+        transfer: "Transferencia",
+        other: "Otro método"
       }[entry.method] || "Otro método";
+
       info.append(element("small", method));
       if (entry.note) info.append(element("p", entry.note));
 
@@ -204,61 +299,75 @@
 
   function fillEntry(entry) {
     editingEntryId = entry.id;
-    $("entryType").value = entry.type;
-    $("entryAmount").value = entry.amount;
-    $("entryDate").value = entry.date;
-    $("entryCategory").value = entry.category || "";
-    $("entryMethod").value = entry.method || "other";
-    $("entryNote").value = entry.note || "";
-    $("saveEntry").textContent = "Guardar corrección";
-    $("cancelEdit").hidden = false;
-    $("entryFormTitle").textContent = "Corregir anotación";
-    $("entryForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    if ($("entryType")) $("entryType").value = entry.type;
+    if ($("entryAmount")) $("entryAmount").value = entry.amount;
+    if ($("entryDate")) $("entryDate").value = entry.date;
+    if ($("entryCategory")) $("entryCategory").value = entry.category || "";
+    if ($("entryMethod")) $("entryMethod").value = entry.method || "other";
+    if ($("entryNote")) $("entryNote").value = entry.note || "";
+    if ($("saveEntry")) $("saveEntry").textContent = "Guardar corrección";
+    if ($("cancelEdit")) $("cancelEdit").hidden = false;
+    if ($("entryFormTitle")) $("entryFormTitle").textContent = "Corregir anotación";
+    if ($("entryForm")) $("entryForm").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function resetEntryForm() {
+    const form = $("entryForm");
+    if (form) form.reset();
+    if ($("entryDate")) $("entryDate").value = today();
+    if ($("entryType")) $("entryType").value = "income";
+    if ($("entryMethod")) $("entryMethod").value = "cash";
+    if ($("saveEntry")) $("saveEntry").textContent = "Guardar anotación";
+    if ($("cancelEdit")) $("cancelEdit").hidden = true;
+    if ($("entryFormTitle")) $("entryFormTitle").textContent = "Anotar dinero";
     editingEntryId = null;
-    $("entryForm").reset();
-    $("entryDate").value = today();
-    $("entryType").value = "income";
-    $("entryMethod").value = "cash";
-    $("saveEntry").textContent = "Guardar anotación";
-    $("cancelEdit").hidden = true;
-    $("entryFormTitle").textContent = "Anotar dinero";
   }
 
   async function renderNotebookSelector() {
     const notebooks = await store.ensureDefaultNotebook();
+    if (!notebooks.length) throw new Error("No hay ninguna libreta disponible.");
+
     const selectedId = await store.activeNotebookId();
     activeNotebookId = notebooks.some(n => n.id === selectedId)
       ? selectedId : notebooks[0].id;
 
     await store.setActiveNotebook(activeNotebookId);
     const select = $("notebookSelect");
-    select.replaceChildren();
-    notebooks.forEach(n => addOption(select, n.id, n.name));
-    select.value = activeNotebookId;
-    $("activeNotebookName").textContent =
-      notebooks.find(n => n.id === activeNotebookId)?.name || "Mi negocio";
+    if (select) {
+      select.replaceChildren();
+      notebooks.forEach(n => addOption(select, n.id, n.name));
+      select.value = activeNotebookId;
+    }
+
+    const name = notebooks.find(n => n.id === activeNotebookId)?.name || "Mi negocio";
+    if ($("activeNotebookName")) $("activeNotebookName").textContent = name;
+    const subtitle = $("homeNotebookName");
+    if (subtitle) subtitle.textContent = name;
   }
 
   async function renderReminders() {
-    const reminders = await store.reminders(activeNotebookId);
+    remindersCache = await store.reminders(activeNotebookId);
     const list = $("remindersList");
+    if (!list) {
+      renderHomeStatus();
+      return;
+    }
     list.replaceChildren();
 
-    if (!reminders.length) {
+    if (!remindersCache.length) {
       list.append(element("p", "No tienes recordatorios anotados."));
+      renderHomeStatus();
       return;
     }
 
-    for (const reminder of reminders) {
+    for (const reminder of remindersCache) {
       const row = element("article", "",
         "reminder-row" + (reminder.done ? " completed" : ""));
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = Boolean(reminder.done);
       checkbox.setAttribute("aria-label", "Marcar pendiente como completado");
+
       checkbox.addEventListener("change", async () => {
         try {
           await store.saveReminder({ ...reminder, done: checkbox.checked });
@@ -290,6 +399,8 @@
       row.append(checkbox, info, remove);
       list.append(row);
     }
+
+    renderHomeStatus();
   }
 
   async function refresh() {
@@ -297,7 +408,9 @@
     entriesCache = await store.entries(activeNotebookId);
     renderEntries();
     renderSummary();
+    renderTodayTotal();
     await renderReminders();
+    renderHomeStatus();
   }
 
   function downloadBlob(blob, filename) {
@@ -338,7 +451,11 @@
 
   function escapeHTML(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, char => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
     })[char]);
   }
 
@@ -363,24 +480,33 @@
   }
 
   function printSummary() {
-    const month = $("summaryMonth").value || today().slice(0, 7);
-    const year = $("summaryYear").value || today().slice(0, 4);
+    const month = ($("summaryMonth") && $("summaryMonth").value) || today().slice(0, 7);
+    const year = ($("summaryYear") && $("summaryYear").value) || today().slice(0, 4);
     const monthly = calculate(entriesCache.filter(e => monthOf(e.date) === month));
-    const annual = calculate(entriesCache.filter(e => yearOf(e.date) === year));
-    const rows = (title, data) => Object.entries(data).map(([key, value]) =>
-      `<tr><td>${escapeHTML(title[key] || key)}</td><td>${escapeHTML(money(value))}</td></tr>`
+    const annual = calculate(entriesCache.filter(e => yearOf(e.date) === String(year)));
+
+    const rows = (names, data) => Object.entries(data).map(([key, value]) =>
+      `<tr><td>${escapeHTML(names[key] || key)}</td><td>${escapeHTML(money(value))}</td></tr>`
     ).join("");
 
     const names = {
-      income: "Ingresos anotados", outflow: "Salidas anotadas",
-      net: "Diferencia registrada", cashIncome: "Ventas en efectivo",
-      cardIncome: "Ventas con tarjeta", otherIncome: "Otros ingresos",
-      purchases: "Compras", expenses: "Gastos", payments: "Pagos anotados",
-      losses: "Pérdidas anotadas", reserves: "Dinero reservado", debts: "Deudas anotadas"
+      income: "Ingresos anotados",
+      outflow: "Salidas anotadas",
+      net: "Diferencia registrada",
+      cashIncome: "Ventas en efectivo",
+      cardIncome: "Ventas con tarjeta",
+      otherIncome: "Otros ingresos",
+      purchases: "Compras",
+      expenses: "Gastos",
+      payments: "Pagos anotados",
+      losses: "Pérdidas anotadas",
+      reserves: "Dinero reservado",
+      debts: "Deudas anotadas"
     };
 
+    const notebookName = $("activeNotebookName")?.textContent || "Mi negocio";
     const body = `<h1>LIBRETA PRIVADA</h1>
-      <p>${escapeHTML($("activeNotebookName").textContent)}</p>
+      <p>${escapeHTML(notebookName)}</p>
       <h2>Resumen mensual: ${escapeHTML(month)}</h2>
       <table><thead><tr><th>Concepto</th><th>Cantidad</th></tr></thead>
       <tbody>${rows(names, monthly)}</tbody></table>
@@ -401,8 +527,9 @@
       `<td>${escapeHTML(e.method)}</td><td>${escapeHTML(e.note)}</td></tr>`
     ).join("");
 
+    const notebookName = $("activeNotebookName")?.textContent || "Mi negocio";
     const body = `<h1>LIBRETA PRIVADA</h1>
-      <p>${escapeHTML($("activeNotebookName").textContent)}</p>
+      <p>${escapeHTML(notebookName)}</p>
       <p>Registros incluidos: ${entriesCache.length}</p>
       <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th>
       <th>Categoría</th><th>Método</th><th>Nota</th></tr></thead>
@@ -428,32 +555,93 @@
     } catch (error) {
       message(error.message || "No se pudo restaurar la copia.", true);
     } finally {
-      $("importFile").value = "";
+      if ($("importFile")) $("importFile").value = "";
     }
   }
 
   function showDialog(id) {
     const dialog = $(id);
-    if (typeof dialog.showModal === "function") dialog.showModal();
+    if (dialog && typeof dialog.showModal === "function") dialog.showModal();
   }
 
   function hideDialog(id) {
     const dialog = $(id);
-    if (typeof dialog.close === "function") dialog.close();
+    if (dialog && typeof dialog.close === "function" && dialog.open) dialog.close();
+  }
+
+  function navigateTo(targetId, entryType) {
+    const fallbacks = {
+      accountsSection: ["summarySection", "summaryCards", "summaryMonth"],
+      remindersSection: ["reminderSection", "reminderForm", "remindersList"],
+      entrySection: ["entrySection", "entryForm"]
+    };
+    let target = $(targetId);
+
+    if (!target && fallbacks[targetId]) {
+      for (const id of fallbacks[targetId]) {
+        target = $(id);
+        if (target) break;
+      }
+    }
+
+    if (entryType && ENTRY_TYPES.includes(entryType)) {
+      if ($("entryType")) $("entryType").value = entryType;
+      if ($("entryFormTitle")) {
+        $("entryFormTitle").textContent = entryType === "income"
+          ? "Anotar dinero"
+          : entryType === "expense"
+            ? "Anotar gastos"
+            : LABELS[entryType] || "Anotar movimiento";
+      }
+    }
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (target.matches("input,select,textarea")) {
+        target.focus({ preventScroll: true });
+      } else if (targetId === "entrySection" && $("entryAmount")) {
+        $("entryAmount").focus({ preventScroll: true });
+      }
+    } else {
+      message("No se encontró esa sección. Revisa los identificadores de index.html.", true);
+    }
+  }
+
+  function bindHomeActions() {
+    document.querySelectorAll("[data-go]").forEach(button => {
+      button.addEventListener("click", () => {
+        const targetId = button.getAttribute("data-go");
+        const entryType = button.getAttribute("data-entry-type");
+        navigateTo(targetId, entryType);
+      });
+    });
+
+    // Accesos alternativos por ID, por si las tarjetas no usan data-go.
+    const directActions = [
+      ["goIncome", "entrySection", "income"],
+      ["goExpense", "entrySection", "expense"],
+      ["goAccounts", "accountsSection", null],
+      ["goReminders", "remindersSection", null]
+    ];
+
+    for (const [id, target, type] of directActions) {
+      on(id, "click", () => navigateTo(target, type));
+    }
   }
 
   async function init() {
     if (!store) throw new Error("No se pudo cargar el almacenamiento local.");
 
-    $("entryDate").value = today();
-    $("reminderDate").value = today();
-    $("summaryMonth").value = today().slice(0, 7);
-    $("summaryYear").value = Number(today().slice(0, 4));
+    if ($("entryDate")) $("entryDate").value = today();
+    if ($("reminderDate")) $("reminderDate").value = today();
+    if ($("summaryMonth")) $("summaryMonth").value = today().slice(0, 7);
+    if ($("summaryYear")) $("summaryYear").value = Number(today().slice(0, 4));
 
     await store.ensureDefaultNotebook();
     await refresh();
+    bindHomeActions();
 
-    $("entryForm").addEventListener("submit", async event => {
+    on("entryForm", "submit", async event => {
       event.preventDefault();
       try {
         await store.saveEntry({
@@ -474,9 +662,9 @@
       }
     });
 
-    $("cancelEdit").addEventListener("click", resetEntryForm);
+    on("cancelEdit", "click", resetEntryForm);
 
-    $("notebookSelect").addEventListener("change", async event => {
+    on("notebookSelect", "change", async event => {
       try {
         await store.setActiveNotebook(event.target.value);
         activeNotebookId = event.target.value;
@@ -487,7 +675,7 @@
       }
     });
 
-    $("newNotebook").addEventListener("click", async () => {
+    on("newNotebook", "click", async () => {
       const name = window.prompt("¿Cómo quieres llamar a la nueva libreta?");
       if (name === null) return;
       try {
@@ -500,9 +688,9 @@
       }
     });
 
-    $("renameNotebook").addEventListener("click", async () => {
+    on("renameNotebook", "click", async () => {
       const name = window.prompt("Nuevo nombre de la libreta:",
-        $("activeNotebookName").textContent);
+        $("activeNotebookName")?.textContent || "Mi negocio");
       if (name === null) return;
       try {
         await store.renameNotebook(activeNotebookId, name);
@@ -513,7 +701,7 @@
       }
     });
 
-    $("deleteNotebook").addEventListener("click", async () => {
+    on("deleteNotebook", "click", async () => {
       if (!window.confirm(
         "Se borrarán esta libreta, sus anotaciones y sus recordatorios. " +
         "Esta acción no se puede deshacer. ¿Continuar?"
@@ -528,7 +716,7 @@
       }
     });
 
-    $("reminderForm").addEventListener("submit", async event => {
+    on("reminderForm", "submit", async event => {
       event.preventDefault();
       try {
         await store.saveReminder({
@@ -539,7 +727,7 @@
           done: false
         });
         $("reminderForm").reset();
-        $("reminderDate").value = today();
+        if ($("reminderDate")) $("reminderDate").value = today();
         await renderReminders();
         message("Recordatorio guardado en este dispositivo.");
       } catch (error) {
@@ -547,28 +735,32 @@
       }
     });
 
-    $("summaryMonth").addEventListener("change", renderSummary);
-    $("summaryYear").addEventListener("input", renderSummary);
-    $("exportBackup").addEventListener("click", () =>
-      exportBackup().catch(error => message(error.message, true)));
-    $("exportCSV").addEventListener("click", exportCSV);
-    $("printSummary").addEventListener("click", printSummary);
-    $("printAllRecords").addEventListener("click", printAllRecords);
-    $("importFile").addEventListener("change", event =>
+    on("summaryMonth", "change", renderSummary);
+    on("summaryYear", "input", renderSummary);
+
+    on("exportBackup", "click", () =>
+      exportBackup().catch(error => message(error.message || "No se pudo crear la copia.", true)));
+
+    on("exportCSV", "click", exportCSV);
+    on("printSummary", "click", printSummary);
+    on("printAllRecords", "click", printAllRecords);
+
+    on("importFile", "change", event =>
       importBackup(event.target.files && event.target.files[0]));
 
-    $("openLegal").addEventListener("click", () => showDialog("legalDialog"));
-    $("closeLegal").addEventListener("click", () => hideDialog("legalDialog"));
-    $("openPrivacy").addEventListener("click", () => showDialog("privacyDialog"));
-    $("closePrivacy").addEventListener("click", () => hideDialog("privacyDialog"));
+    on("openLegal", "click", () => showDialog("legalDialog"));
+    on("closeLegal", "click", () => hideDialog("legalDialog"));
+    on("openPrivacy", "click", () => showDialog("privacyDialog"));
+    on("closePrivacy", "click", () => hideDialog("privacyDialog"));
 
-    $("helpToggle").addEventListener("click", () => {
+    on("helpToggle", "click", () => {
       const help = $("quickHelp");
+      if (!help) return;
       help.hidden = !help.hidden;
       $("helpToggle").setAttribute("aria-expanded", String(!help.hidden));
     });
 
-    $("eraseAll").addEventListener("click", async () => {
+    on("eraseAll", "click", async () => {
       const confirmation = window.prompt(
         "Se borrarán todas las libretas, anotaciones y recordatorios de esta aplicación " +
         "en este navegador. Escribe BORRAR TODO para confirmar."
@@ -587,14 +779,17 @@
       }
     });
 
-    $("appLoading").hidden = true;
-    $("appContent").hidden = false;
+    if ($("appLoading")) $("appLoading").hidden = true;
+    if ($("appContent")) $("appContent").hidden = false;
   }
 
   init().catch(error => {
-    $("appLoading").textContent =
-      "No se pudo abrir la libreta. No borres los datos del navegador. " +
-      (error.message || "");
+    if ($("appLoading")) {
+      $("appLoading").textContent =
+        "No se pudo abrir la libreta. No borres los datos del navegador. " +
+        (error.message || "");
+    }
     message(error.message || "Error al iniciar la aplicación.", true);
+    console.error("Error al iniciar LIBRETA PRIVADA:", error);
   });
 })();
